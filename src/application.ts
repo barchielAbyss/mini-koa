@@ -8,6 +8,17 @@ import context from './context';
 import request from './request';
 import response from './response';
 
+const asyncGetContent = (fn: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await fn();
+      resolve(data);
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 export default class Application {
   server: Server;
   useFn: any;
@@ -32,8 +43,15 @@ export default class Application {
 
   handleRequest: RequestListener = (request, response) => {
     const cxt = this.createContext(request, response);
-    this.useFn(cxt)
-    cxt.res.end(cxt.body)
+    
+    asyncGetContent(async () => {
+      await this.useFn(cxt)
+    }).then(() => {
+      cxt.res.end(cxt.body)
+    }).catch((err) => {
+      console.error(err)
+    })
+    
   }
 
   createContext(request: any, response: any) {

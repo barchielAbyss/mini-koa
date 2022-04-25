@@ -4,7 +4,7 @@ const app = new Application()
 
 console.info(app)
 
-app.use((cxt) => {
+app.use(async (cxt) => {
   // cxt.body = 'hello world'
 
   console.log('req -->', cxt.req.url)
@@ -14,7 +14,15 @@ app.use((cxt) => {
   cxt.body = 'hello world'
   cxt.body = 'hello world2'
   cxt.body = 'hello world3'
-  cxt.body = '<p style="color: red">hello world4</p>'
+  const data = await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('<p style="color: red">hello world4</p>')
+    }, 3000)
+  })
+
+  console.log(data)
+
+  cxt.body = data
 
 })
 
