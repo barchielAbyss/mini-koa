@@ -4,6 +4,7 @@ export default {
     return  this._body
   },
   set body(content) {
+    this.res.statusCode = 200
     this._body = content
   }
 }

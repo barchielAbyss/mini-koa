@@ -21,7 +21,7 @@ const asyncGetContent = (fn: any) => {
 
 export default class Application {
   server: Server;
-  useFn: any;
+  middleware: Array<any> = [];
   context: any;
   request: any;
   response: any;
@@ -33,7 +33,7 @@ export default class Application {
   }
 
   use(fn: any) {
-    this.useFn = fn;
+    this.middleware.push(fn);
   }
 
   listen(port: number, callback: any) {
@@ -41,17 +41,31 @@ export default class Application {
     this.server.listen(port, callback);
   }
 
+  compose(ctx) {
+    const dispatch = (i: number) => {
+      if (i === this.middleware.length) {
+        return Promise.resolve();
+      }
+      return Promise.resolve(
+        this.middleware[i](
+          ctx,
+          () => dispatch(i + 1)
+        )
+      )
+    }
+
+    return dispatch(0)
+  }
+
   handleRequest: RequestListener = (request, response) => {
     const cxt = this.createContext(request, response);
+    cxt.res.statusCode = 404
     
-    asyncGetContent(async () => {
-      await this.useFn(cxt)
-    }).then(() => {
-      cxt.res.end(cxt.body)
+    this.compose(cxt).then(() => {
+      cxt.res.end(cxt.body || '404')
     }).catch((err) => {
-      console.error(err)
+      cxt.res.end(err)
     })
-    
   }
 
   createContext(request: any, response: any) {
