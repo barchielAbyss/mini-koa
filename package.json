@@ -1,0 +1,17 @@
+{
+  "name": "mini-koa",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "repository": "git@github.barchiel.com:barchielAbyss/mini-koa.git",
+  "author": "李广远 <liguangyuan@belloai.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.26",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
